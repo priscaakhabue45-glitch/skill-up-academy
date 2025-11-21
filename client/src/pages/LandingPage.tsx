@@ -258,13 +258,14 @@ const LandingPage = () => {
           max-width: 800px;
           margin: 0 auto;
           text-align: center;
-          color: var(--color-white);
+          color: #ffffff;
         }
 
         .hero-title {
           font-size: 4rem;
           margin-bottom: var(--spacing-lg);
           line-height: 1.1;
+          color: #ffffff;
         }
 
         .gradient-text {
@@ -275,7 +276,7 @@ const LandingPage = () => {
 
         .hero-subtitle {
           font-size: 1.25rem;
-          color: var(--color-gray-300);
+          color: #e5e7eb;
           margin-bottom: var(--spacing-2xl);
           line-height: 1.6;
         }
@@ -306,7 +307,7 @@ const LandingPage = () => {
         }
 
         .stat-item p {
-          color: var(--color-gray-400);
+          color: #9ca3af;
           font-size: 0.875rem;
           margin: 0;
         }
@@ -354,7 +355,7 @@ const LandingPage = () => {
         .about-section {
           padding: 6rem 0;
           background: var(--gradient-hero);
-          color: var(--color-white);
+          color: #ffffff;
         }
 
         .about-content {
@@ -367,11 +368,11 @@ const LandingPage = () => {
         .about-text h2 {
           font-size: 2.5rem;
           margin-bottom: var(--spacing-lg);
-          color: var(--color-white);
+          color: #ffffff;
         }
 
         .about-text p {
-          color: var(--color-gray-300);
+          color: #d1d5db;
           font-size: 1.125rem;
           line-height: 1.8;
         }
@@ -383,7 +384,7 @@ const LandingPage = () => {
 
         .about-card h3 {
           margin-bottom: var(--spacing-lg);
-          color: var(--color-white);
+          color: #ffffff;
         }
 
         .journey-list {
@@ -393,7 +394,7 @@ const LandingPage = () => {
         .journey-list li {
           padding: var(--spacing-md) 0;
           font-size: 1.125rem;
-          color: var(--color-gray-300);
+          color: #d1d5db;
           border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 

@@ -1,4 +1,6 @@
 import { useAuth } from '../../context/AuthContext';
+import { useEffect, useState } from 'react';
+import { supabase } from '../../lib/supabase';
 
 interface DashboardHomeProps {
   onNavigate: (view: 'dashboard' | 'modules' | 'accountability' | 'assignments') => void;
@@ -6,11 +8,74 @@ interface DashboardHomeProps {
 
 const DashboardHome = ({ onNavigate }: DashboardHomeProps) => {
   const { profile } = useAuth();
-  const userName = profile?.full_name?.split(' ')[0] || 'Student'; // Get first name or default to 'Student'
+  const userName = profile?.full_name?.split(' ')[0] || 'Student';
   const currentWeek = 1;
   const currentModule = 1;
   const totalModules = 14;
-  const streak = 5;
+
+  const [streak, setStreak] = useState(0);
+  const [moduleData, setModuleData] = useState({
+    title: 'Introduction to Digital Skills',
+    description: 'Learn the foundations of digital literacy and online learning'
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!profile?.id) return;
+
+      try {
+        // Fetch Module 1 Data
+        const { data: moduleResult, error: moduleError } = await supabase
+          .from('modules')
+          .select('title, description')
+          .eq('week_number', 1)
+          .maybeSingle();
+
+        if (!moduleError && moduleResult) {
+          setModuleData(moduleResult);
+        }
+
+        // Fetch Streak
+        const { data: logs, error: logsError } = await supabase
+          .from('daily_logs')
+          .select('log_date')
+          .eq('student_id', profile.id)
+          .order('log_date', { ascending: false });
+
+        if (!logsError && logs) {
+          const today = new Date().toISOString().split('T')[0];
+          const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+          const loggedDates = new Set(logs.map(l => l.log_date));
+
+          let currentStreak = 0;
+
+          // If not logged today and not logged yesterday, streak is broken (0)
+          if (!loggedDates.has(today) && !loggedDates.has(yesterday)) {
+            setStreak(0);
+            return;
+          }
+
+          // If today is logged, start from today. If not, start from yesterday.
+          let dateIterator = loggedDates.has(today) ? new Date() : new Date(Date.now() - 86400000);
+
+          while (true) {
+            const dateStr = dateIterator.toISOString().split('T')[0];
+            if (loggedDates.has(dateStr)) {
+              currentStreak++;
+              dateIterator.setDate(dateIterator.getDate() - 1);
+            } else {
+              break;
+            }
+          }
+          setStreak(currentStreak);
+        }
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      }
+    };
+
+    fetchData();
+  }, [profile?.id]);
 
   return (
     <div className="dashboard-home animate-fadeIn">
@@ -74,10 +139,10 @@ const DashboardHome = ({ onNavigate }: DashboardHomeProps) => {
           <div className="module-info">
             <span className="badge badge-primary">Week {currentWeek}</span>
             <h2 style={{ marginTop: 'var(--spacing-md)', marginBottom: 'var(--spacing-sm)' }}>
-              Introduction to Digital Skills
+              {moduleData.title}
             </h2>
             <p style={{ color: 'var(--color-gray-600)', marginBottom: 'var(--spacing-lg)' }}>
-              Learn the foundations of digital literacy and online learning
+              {moduleData.description}
             </p>
             <button className="btn btn-primary btn-lg" onClick={() => onNavigate('modules')}>
               Continue Learning →
